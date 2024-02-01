@@ -8,10 +8,10 @@
 arch=$(uname -a)
 
 # Physical Processors
-cpup=$(grep "physical id" /proc/cpuinfo | wc -l)
+cpup=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
 
 # Virtual Processors
-cpuv=$(grep processor /proc/cpuinfo | wc -l)
+cpuv=$(lscpu | grep "^Core(s) per socket:" | awk '{print $4}')
 
 # Current utilization rate of Processors
 cpuuse=$(vmstat 1 3 | tail -1 | awk '{print $15}')
