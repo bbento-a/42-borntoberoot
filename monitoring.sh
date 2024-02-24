@@ -8,13 +8,13 @@
 arch=$(uname -a)
 
 # Physical Processors
-cpup=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
+cpup=$(lscpu | grep "^Socket(s):" | awk '{print $2}')
 
 # Virtual Processors
 cpuv=$(lscpu | grep "^Core(s) per socket:" | awk '{print $4}')
 
 # Current utilization rate of Processors
-cpuuse=$(vmstat 1 3 | tail -1 | awk '{print $15}')
+cpuuse=$(vmstat 1 1 | tail -1 | awk '{printf 100 - $15}')
 
 # Current RAM avaiable + its utilization rate
 ramuse=$(free --mega | awk '$1 == "Mem:" {print $3}')
@@ -30,13 +30,13 @@ mempercent=$(df -m | grep "/dev/" | grep -v "/boot" | awk '{use += $3} {total +=
 lboot=$(who -b | awk '{print $3 "  " $4}')
 
 # LVM status
-lvm=$(if [ $(lsblk | grep "lvm" | wc -l) -gt 0 ]; then echo yes; else echo no; fi)
+lvm=$(if [ $(lsblk | awk '{print $6}' | grep "lvm" | wc -l) -gt 0 ]; then echo yes; else echo no; fi)
 
 # Connections status
 tcp=$(ss -ta | grep ESTAB | wc -l)
 
 # Current users logged in
-ulogs=$(users | wc -l)
+ulogs=$(who | awk '{print $1}' | sort -u | wc -l)
 
 # IP and MAC addresses
 ip=$(hostname -I)
